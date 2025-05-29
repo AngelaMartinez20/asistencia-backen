@@ -1,15 +1,21 @@
-# Usa la imagen oficial de PHP con Apache
+# Usa PHP con Apache
 FROM php:8.2-apache
 
-# Habilita extensiones necesarias (opcional)
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
+# Instala dependencias necesarias del sistema
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    libzip-dev \
+    unzip \
+    zip \
+    nano \
+    curl \
+    && docker-php-ext-install pdo pdo_pgsql
 
-# Copia el contenido del proyecto al servidor web
+# Copia el proyecto al contenedor
 COPY . /var/www/html/
 
 # Ajusta permisos
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Expone el puerto 80 para HTTP
 EXPOSE 80
