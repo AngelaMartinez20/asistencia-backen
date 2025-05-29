@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: asistencia-backen
+    env: docker
+    plan: free
+    autoDeploy: true
