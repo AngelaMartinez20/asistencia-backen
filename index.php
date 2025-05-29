@@ -1,12 +1,18 @@
 <?php
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 header("Content-Type: application/json");
 
-// Obtener JSON del cuerpo del POST
 $input = file_get_contents("php://input");
 $data = json_decode($input, true);
 
-// Validar campos
 if (!isset($data['claseId']) || !isset($data['timestamp'])) {
     http_response_code(400);
     echo json_encode(["message" => "Datos incompletos"]);
@@ -18,7 +24,6 @@ $timestamp = intval($data['timestamp']);
 $fecha = date("Y-m-d H:i:s", $timestamp / 1000);
 $ip = $_SERVER['REMOTE_ADDR'];
 
-// Conexión a PostgreSQL
 $dbhost = "dpg-d0sc97s9c44c739on6o0-a";
 $dbport = "5432";
 $dbname = "asistencia_db_pgyx";
@@ -32,7 +37,6 @@ try {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
 
-    // Insertar registro
     $sql = "INSERT INTO asistencias (clase_id, fecha, ip_estudiante) 
             VALUES (:claseId, :fecha, :ip)";
     $stmt = $pdo->prepare($sql);
