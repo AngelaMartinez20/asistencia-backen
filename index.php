@@ -1,4 +1,8 @@
 <?php
+// ✅ Opcional: desactivar errores visibles al cliente
+ini_set('display_errors', 0);
+error_reporting(E_ERROR | E_PARSE);
+
 // CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
@@ -24,11 +28,11 @@ if (!isset($data['claseId'], $data['timestamp'])) {
 
 // Sanitizar y procesar
 $claseId  = htmlspecialchars($data['claseId'], ENT_QUOTES, 'UTF-8');
-$timestamp = (int) round($data['timestamp'] / 1000);  // ✅ CORREGIDO
+$timestamp = (int) ($data['timestamp'] / 1000);  // ✅ Conversión segura
 $fecha     = date("Y-m-d H:i:s", $timestamp);
 $ip        = $_SERVER['REMOTE_ADDR'];
 
-// Datos de conexión (Render + TLS)
+// Datos de conexión
 $dbhost = "dpg-d0sc97s9c44c739on6o0-a";
 $dbport = "5432";
 $dbname = "asistencia_db_pgyx";
@@ -36,7 +40,6 @@ $dbuser = "asistencia_db_pgyx_user";
 $dbpass = "9SiUDr6GYslbOpqeFL8F6EcCksoVIuyp";
 $dsn    = "pgsql:host=$dbhost;port=$dbport;dbname=$dbname;sslmode=require";
 
-// Conectar e insertar
 try {
     $pdo = new PDO($dsn, $dbuser, $dbpass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
